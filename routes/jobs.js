@@ -1,16 +1,15 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const {getAllJobs,
-    getJob,
-    createJob,
-    updateJob,
-    deleteJob} = require('../controllers/jobs')
+const {
+  getAllJobs,
+  getJob,
+  createJob,
+  updateJob,
+  deleteJob,
+} = require("../controllers/jobs");
 
-router.route('/jobs').get(getAllJobs)
-router.route('/jobs').get(getJob)
-router.route('/jobs').post(createJob)
-router.route('/jobs').put(updateJob)
-router.route('/jobs').delete(deleteJob)
+router.route("/").get(getAllJobs).post(createJob);
+router.route("/:id").get(getJob).delete(deleteJob).put(updateJob);
 
-module.exports = router
+module.exports = router;

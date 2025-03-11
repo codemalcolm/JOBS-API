@@ -24,10 +24,10 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
+// encrypting password before each save of the user 
 UserSchema.pre("save", async function () {
   const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(password, salt);
-  next();
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 module.exports = mongoose.model("User", UserSchema);

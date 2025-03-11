@@ -13,6 +13,9 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 // DB connection
 const connectDB = require("./db/connect");
 
+// middleware
+const authenticateUser = require("./middleware/authentication");
+
 app.use(express.json());
 // extra packages
 
@@ -21,8 +24,8 @@ app.get("/", (req, res) => {
   res.send("jobs api");
 });
 
-app.use("/api/v1/jobs", jobsRouter);
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/jobs",authenticateUser, jobsRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

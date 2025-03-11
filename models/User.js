@@ -31,13 +31,20 @@ UserSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-// method for creating JWTs 
+// method for creating JWTs
 UserSchema.methods.createJWT = function () {
   return jwt.sign(
     { userId: this._id, name: this.name },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_LIFETIME }
   );
+};
+
+// checking encrypted password
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  // candidate password is coming from req.body, this.password is coming from the database
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
 };
 
 module.exports = mongoose.model("User", UserSchema);

@@ -1,6 +1,7 @@
 const StatusCodes = require("http-status-codes");
 const Job = require("../models/Job");
 const { BadRequestError, NotFoundError } = require("../errors");
+const ForbiddenError = require("../errors/forbidden");
 
 const getAllJobs = async (req, res) => {
   const jobs = await Job.find({ createdBy: req.user.userId });
@@ -14,6 +15,12 @@ const getJob = async (req, res) => {
   if (!job) {
     throw new NotFoundError(`Job with id: ${jobId} not found`);
   }
+
+  // user check
+  if(req.user.userId !== job.createdBy){
+    throw new ForbiddenError("You are not allowed to view this document")
+  }
+
   res.status(StatusCodes.OK).json({ job });
 };
 

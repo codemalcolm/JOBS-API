@@ -3,7 +3,10 @@ const Job = require("../models/Job");
 const { BadRequestError } = require("../errors");
 
 const getAllJobs = async (req, res) => {
-  res.send("getAllJobs");
+  console.log(req.user);
+
+  const jobs = await Job.find();
+  res.status(StatusCodes.OK).json({ jobs });
 };
 
 const getJob = async (req, res) => {

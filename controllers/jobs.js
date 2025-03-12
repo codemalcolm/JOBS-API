@@ -15,10 +15,11 @@ const getJob = async (req, res) => {
   if (!job) {
     throw new NotFoundError(`Job with id: ${jobId} not found`);
   }
+  console.log(req.user);
 
   // user check
-  if(req.user.userId !== job.createdBy){
-    throw new ForbiddenError("You are not allowed to view this document")
+  if (!job.checkUserAccess(req.user.userId)) {
+    throw new ForbiddenError("You are not allowed to view this document");
   }
 
   res.status(StatusCodes.OK).json({ job });

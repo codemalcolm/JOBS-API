@@ -26,4 +26,11 @@ const JobSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+//checking user access to routes with /:jobId
+JobSchema.methods.checkUserAccess = function(candidateUserId) {
+  // candidateUserId is coming from req.user, this.createdBy is coming from the db
+  const hasAccess = candidateUserId === this.createdBy
+  return hasAccess
+}
+
 module.exports = mongoose.model("Job", JobSchema);

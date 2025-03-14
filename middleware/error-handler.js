@@ -1,19 +1,30 @@
-const { CustomAPIError } = require('../errors')
-const { StatusCodes } = require('http-status-codes')
+const { CustomAPIError } = require("../errors");
+const { StatusCodes } = require("http-status-codes");
 
 const errorHandlerMiddleware = (err, req, res, next) => {
+  console.log(err)
   let customError = {
     //set default
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
-    msg: err.message || "Something went wrong"
-  }
+    msg: err.message || "Something went wrong",
+  };
 
-  if(err.code && err.code === 11000){
-    customError.msg = `The email address : '${err.keyValue.email}' is already in use`
+  if (err.name === "ValidationError") {
+    customError.msg = `Some properties are missing : ${Object.values(err.errors).map((item) => item.properties.message)}`;
     customError.statusCode = 400;
   }
-  // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: customError.msg })
-  return res.status(customError.statusCode).json({ msg: customError.msg })
-}
 
-module.exports = errorHandlerMiddleware
+  if (err.name === "CastError") {
+    customError.msg = `No item found with id : ${err.value}`;
+    customError.statusCode = 404;
+  }
+
+  if (err.code && err.code === 11000) {
+    customError.msg = `The email address : '${err.keyValue.email}' is already in use`;
+    customError.statusCode = 400;
+  }
+  // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ err });
+  return res.status(customError.statusCode).json({ msg: customError.msg });
+};
+
+module.exports = errorHandlerMiddleware;
